@@ -1,10 +1,11 @@
 import { readFile, readdir, stat } from "fs/promises";
 import { Langs } from "../types/Langs";
+import { FormattedString } from "./format/FormattedString";
 
 export default class LangData {
     public readonly lang: Langs
 
-    private strings: Record<string, string> = {}
+    private strings: Record<string, FormattedString> = {}
 
     private constructor(lang: Langs) {
         this.lang = lang
@@ -23,7 +24,7 @@ export default class LangData {
         const parseObject = (obj: Record<string, any>) => {
             for (const [key, value] of Object.entries(obj)) {
                 keyParts.push(key)
-                if (typeof value === 'object') parseObject(value); else this.strings[keyParts.join('.')] = value
+                if (typeof value === 'object') parseObject(value); else this.strings[keyParts.join('.')] = FormattedString.create(value)
                 keyParts.pop()
             }
         }
@@ -31,11 +32,11 @@ export default class LangData {
 
     }
 
-    public getStrings() {
+    public getStrings(): Record<string, FormattedString> {
         return this.strings
     }
 
-    private async parseDir(path: string, baseKey?: string) {
+    private async parseDir(path: string, baseKey?: string): Promise<void> {
         const files = await readdir(path)
 
         for (const file of files) {
@@ -55,7 +56,7 @@ export default class LangData {
         }
     }
 
-    public static async create(lang: Langs, path: string) {
+    public static async create(lang: Langs, path: string): Promise<LangData> {
         if (!Object.values(Langs).includes(lang))
             throw new Error(`Invalid lang: ${lang}`)
 

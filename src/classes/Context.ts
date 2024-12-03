@@ -14,11 +14,11 @@ export default class Context {
         this.basePath = basePath
     }
 
-    public t(key: string) {
+    public t(key: string, object?: any) {
         const value = this.data.getStrings()[(this.basePath !== '') ? `${this.basePath}.${key}`: key]
         if (!value)
             throw new Error(`Translation not found for key: ${(this.basePath !== '') ? `${this.basePath}.${key}` : key} in lang: ${this.data.lang}`)
-        return this.data.getStrings()[(this.basePath !== '') ? `${this.basePath}.${key}`: key]
+        return this.data.getStrings()[(this.basePath !== '') ? `${this.basePath}.${key}`: key].resolve(object)
     }
 
 }

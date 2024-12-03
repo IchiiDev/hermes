@@ -80,7 +80,7 @@ export default class Hermes {
         for (const lang of langs) {
             if (!Hermes.instance.translations[lang].getStrings()[key])
                 continue;
-            object[lang] = Hermes.instance.translations[lang].getStrings()[key];
+            object[lang] = Hermes.instance.translations[lang].getStrings()[key].resolve({});
         }
         return object;
     }
@@ -127,7 +127,7 @@ export default class Hermes {
         for (const lang of langs) {
             emptyTranslations[lang] = [];
             for (const [key, value] of Object.entries(this.translations[lang].getStrings())) {
-                if (value.length === 0)
+                if (value.isEmpty())
                     emptyTranslations[lang].push(key);
             }
         }
